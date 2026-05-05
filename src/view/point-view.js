@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import { createElement } from '../render.js';
+import AbstractView from '../framework/view/abstract-view.js';
 import { calculateEventDuration, formatToTime } from '../utils/date.js';
 import { capitalize } from '../utils/text.js';
 
@@ -13,7 +13,8 @@ const createOfferTemplate = ({ title, price }) => (
   `
 );
 
-const createPointTemplate = ({ dateFrom, dateTo, basePrice, isFavorite, type }, destination, selectedOffers) => {
+const createPointTemplate = ({ point, destination, selectedOffers }) => {
+  const { type, dateFrom, dateTo, basePrice, isFavorite } = point;
   const dateTimeFrom = dayjs(dateFrom).format('YYYY-MM-DD');
   const dateHumanFromMonthDay = dayjs(dateFrom).format('MMM DD');
   const scheduleTimeFrom = formatToTime(dateFrom);
@@ -60,26 +61,27 @@ const createPointTemplate = ({ dateFrom, dateTo, basePrice, isFavorite, type }, 
   `;
 };
 
-export default class PointView {
-  constructor({point, destinationExtended, selectedOffers}) {
-    this.point = point;
-    this.destinationExtended = destinationExtended;
-    this.selectedOffers = selectedOffers;
+export default class PointView extends AbstractView {
+  #point = null;
+  #destination = null;
+  #selectedOffers = null;
+  #handleRollupClick = null;
+
+  constructor({ point, destination, selectedOffers, onRollupClick }) {
+    super();
+    this.#point = point;
+    this.#destination = destination;
+    this.#selectedOffers = selectedOffers;
+    this.#handleRollupClick = onRollupClick;
+
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#handleRollupClick);
   }
 
-  getTemplate() {
-    return createPointTemplate(this.point, this.destinationExtended, this.selectedOffers);
-  }
-
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
+  get template() {
+    return createPointTemplate({
+      point: this.#point,
+      destination: this.#destination,
+      selectedOffers: this.#selectedOffers
+    });
   }
 }

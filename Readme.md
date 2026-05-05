@@ -1,7 +1,7 @@
 # Проект «Большое путешествие»
 
 * Студент: [Артем Ткачев](https://up.htmlacademy.ru/ecmascript-individual/2/user/2416991).
-* Наставник: `Кексик`.
+* Наставник: [Станислав Михайлов](https://htmlacademy.ru/profile/id139638).
 
 ---
 

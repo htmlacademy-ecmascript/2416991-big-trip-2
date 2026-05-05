@@ -1,17 +1,18 @@
 import { DEFAULT_POINT } from '../utils/const';
 
 export default class NewPointModel {
-  constructor(defaultDestination) {
-    this.defaultPoint = {...DEFAULT_POINT, destination: defaultDestination.id};
+  #point = { ...DEFAULT_POINT };
+  #destination = null;
 
-    this.destinationExtended = defaultDestination;
+  constructor(destinationsModel) {
+    this.#destination = destinationsModel.getDestination(this.#point.destination);
   }
 
-  getDefaultPoint() {
-    return this.defaultPoint;
+  get defaultPoint() {
+    return this.#point;
   }
 
   getDefaultPointDestinationExtended() {
-    return this.destinationExtended;
+    return this.#destination;
   }
 }
