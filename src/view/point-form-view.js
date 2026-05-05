@@ -1,4 +1,4 @@
-import { createElement } from '../render.js';
+import AbstractView from '../framework/view/abstract-view.js';
 import { POINT_TYPES } from '../utils/const.js';
 import { formatToDateInput } from '../utils/date.js';
 import { capitalize } from '../utils/text.js';
@@ -33,16 +33,31 @@ const createTypeWrapperTemplate = (type, id) =>
     </div>
   `;
 
-const createDestinationInputTemplate = (currentDestination, type, destinations, id) => `
-          <div class="event__field-group  event__field-group--destination">
-            <label class="event__label  event__type-output" for="event-destination-${id}">
-              ${type}
-            </label>
-            <input class="event__input  event__input--destination" id="event-destination-${id}" type="text" name="event-destination" value="${currentDestination.name}" list="destination-list-${id}">
-            <datalist id="destination-list-${id}">
-              ${destinations.map((destination) => `<option value="${destination.name}"></option>`).join('')}
-            </datalist>
-          </div>`;
+const createDestinationInputTemplate = ({
+  id,
+  type,
+  currentDestination,
+  destinations
+}) => `
+        <div class="event__field-group  event__field-group--destination">
+          <label class="event__label  event__type-output" for="event-destination-${id}">
+            ${type}
+          </label>
+
+          <input
+            class="event__input event__input--destination"
+            id="event-destination-${id}"
+            type="text"
+            name="event-destination"
+            value="${currentDestination.name}"
+            list="destination-list-${id}"
+          >
+
+          <datalist id="destination-list-${id}">
+            ${destinations.map((destination) => `<option value="${destination.name}"></option>`).join('')}
+          </datalist>
+        </div>
+      `;
 
 const createDateInterfaceTemplate = (dateFrom, dateTo, id) => `
   <div class="event__field-group  event__field-group--time">
@@ -75,6 +90,12 @@ const createButtonTemplate = (isResetButton, isNewPoint) => {
     <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
   `;
 };
+
+const createRollupButtonTemplate = () => `
+  <button class="event__rollup-btn" type="button">
+    <span class="visually-hidden">Open event</span>
+  </button>
+`;
 
 const createOfferTemplate = (offer, isChecked) => `
   <div class="event__offer-selector">
@@ -130,7 +151,14 @@ const createDestinationTemplate = (destination) => {
   `;
 };
 
-const createPointFormTemplate = (point, destinationExtended, selectedOffers, offers, currentDestination, allDestinations) => {
+const createPointFormTemplate = ({
+  point,
+  selectedOffers,
+  offers,
+  currentDestination,
+  destinations
+}) => {
+
   const {
     basePrice,
     dateFrom,
@@ -139,25 +167,22 @@ const createPointFormTemplate = (point, destinationExtended, selectedOffers, off
     type,
   } = point;
 
+  const offersOfCurrentType = offers.find((offer) => offer.type === type).offers;
   const isNewPoint = id === null;
-
   return `
     <li class="trip-events__item">
       <form class="event event--edit" action="#" method="post">
         <header class="event__header">
           ${createTypeWrapperTemplate(type, id)}
-
-          ${createDestinationInputTemplate(destinationExtended, type, allDestinations, id)}
+          ${createDestinationInputTemplate({ id, type, currentDestination, destinations })}
           ${createDateInterfaceTemplate(dateFrom, dateTo, id)}
-
           ${createPriceTemplate(basePrice, id)}
-
           ${createButtonTemplate(false)}
           ${createButtonTemplate(true, isNewPoint)}
+          ${!isNewPoint && createRollupButtonTemplate()}
         </header>
         <section class="event__details">
-          ${createOffersTemplate(offers, selectedOffers)}
-
+          ${createOffersTemplate(offersOfCurrentType, selectedOffers)}
           ${createDestinationTemplate(currentDestination)}
         </section>
       </form>
@@ -165,29 +190,41 @@ const createPointFormTemplate = (point, destinationExtended, selectedOffers, off
   `;
 };
 
-export default class PointFormView {
-  constructor({ point, destinationExtended, selectedOffers, offers, currentDestination, allDestinations }) {
-    this.point = point;
-    this.destinationExtended = destinationExtended;
-    this.selectedOffers = selectedOffers;
-    this.offers = offers;
-    this.currentDestination = currentDestination;
-    this.allDestinations = allDestinations;
+export default class PointFormView extends AbstractView {
+  #point = null;
+  #selectedOffers = null;
+  #offers = null;
+  #currentDestination = null;
+  #destinations = null;
+  #handleFormSubmit = null;
+  #handleFormReset = null;
+  #handleRollupClick = null;
+
+  constructor({ point, selectedOffers, offers, currentDestination, destinations, onFormSubmit, onFormReset, onRollupClick }) {
+    super();
+    // console.log('selectedOffers', selectedOffers);
+    // console.log('offers', offers);
+    this.#point = point;
+    this.#selectedOffers = selectedOffers;
+    this.#offers = offers;
+    this.#currentDestination = currentDestination;
+    this.#destinations = destinations;
+    this.#handleFormSubmit = onFormSubmit;
+    this.#handleFormReset = onFormReset;
+    this.#handleRollupClick = onRollupClick;
+
+    this.element.querySelector('.event.event--edit').addEventListener('submit', this.#handleFormSubmit);
+    this.element.querySelector('.event.event--edit').addEventListener('reset', this.#handleFormReset);
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#handleRollupClick);
   }
 
-  getTemplate() {
-    return createPointFormTemplate(this.point, this.destinationExtended, this.selectedOffers, this.offers, this.currentDestination, this.allDestinations);
-  }
-
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
+  get template() {
+    return createPointFormTemplate({
+      point: this.#point,
+      selectedOffers: this.#selectedOffers,
+      offers: this.#offers,
+      currentDestination: this.#currentDestination,
+      destinations: this.#destinations,
+    });
   }
 }

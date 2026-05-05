@@ -3,17 +3,13 @@ import { getMockDestinations } from '../mocks';
 const destinations = getMockDestinations();
 
 export default class DestinationsModel {
-  destinations = [...destinations];
+  #destinations = [...destinations];
 
-  getAllDestinations() {
-    return this.destinations;
+  get destinations() {
+    return this.#destinations;
   }
 
   getDestination(id) {
     return this.destinations.find((destination) => destination.id === id);
-  }
-
-  getDefaultDestination() {
-    return this.destinations[0];
   }
 }

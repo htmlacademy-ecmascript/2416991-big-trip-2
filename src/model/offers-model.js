@@ -3,17 +3,20 @@ import { getMockOffers } from '../mocks';
 const mockOffers = getMockOffers();
 
 export default class OffersModel {
-  offers = [...mockOffers];
+  #offers = [...mockOffers];
 
-  getOffers() {
-    return this.offers;
+  get offers() {
+    return this.#offers;
   }
 
   getOffersByType(type) {
-    return this.offers.find((offer) => offer.type === type).offers;
+    return this.#offers.find((offer) => offer.type === type).offers;
   }
 
   getSelectedOffers(type, idList) {
-    return this.offers.find((offer) => offer.type === type).offers.filter((offer) => idList.includes(offer.id));
+    const offersOfType = this.getOffersByType(type);
+    const selectedOffers = offersOfType.filter((offer) => idList.includes(offer.id));
+
+    return selectedOffers;
   }
 }

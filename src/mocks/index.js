@@ -1,8 +1,7 @@
+import { DESTINATION_ID_START } from '../utils/const.js';
 import { generateDestinations } from './destination.js';
 import { getRandomArrayElement } from './mock-utils';
 import { createPoint, getMockOffers } from './point';
-
-const DESTINATION_ID_START = 1001;
 
 const destinations = generateDestinations(DESTINATION_ID_START);
 
