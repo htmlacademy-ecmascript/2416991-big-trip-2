@@ -54,8 +54,13 @@ export default class TripPresenter {
     render(this.#pointsListComponent, this.#tripContainer);
   }
 
-  #handleRollupClick = (pointId) => {
-    console.log('Rollup clicked for point with id:', pointId);
+  #handlePointChange = (updatedPoint) => {
+    this.#points = updateItem(this.#points, updatedPoint);
+    this.#pointPresenters.get(updatedPoint.id).init(updatedPoint);
+  };
+
+  #handleModeChange = () => {
+    this.#pointPresenters.forEach((presenter) => presenter.resetView());
   };
 
   #renderPoint(point) {
@@ -63,8 +68,8 @@ export default class TripPresenter {
       pointListContainer: this.#pointsListComponent.element,
       destinationsModel: this.#destinationsModel,
       offersModel: this.#offersModel,
-      onRollupClick: this.#handleRollupClick,
-      onDataChange: this.#handlePointChange
+      onDataChange: this.#handlePointChange,
+      onModeChange: this.#handleModeChange
     });
     pointPresenter.init(point);
     this.#pointPresenters.set(point.id, pointPresenter);
@@ -91,9 +96,4 @@ export default class TripPresenter {
     this.#pointPresenters.forEach((presenter) => presenter.destroy());
     this.#pointPresenters.clear();
   }
-
-  #handlePointChange = (updatedPoint) => {
-    this.#points = updateItem(this.#points, updatedPoint);
-    this.#pointPresenters.get(updatedPoint.id).init(updatedPoint);
-  };
 }

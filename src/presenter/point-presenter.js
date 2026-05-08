@@ -2,35 +2,36 @@ import { remove, render, replace } from '../framework/render';
 import PointFormView from '../view/point-form-view';
 import PointView from '../view/point-view';
 
+const Mode = {
+  DEFAULT: 'DEFAULT',
+  FORM: 'FORM',
+};
+
 export default class PointPresenter {
   #pointListContainer = null;
   #destinationsModel = null;
   #offersModel = null;
   #handleDataChange = null;
+  #handleModeChange = null;
 
   #pointComponent = null;
   #pointFormComponent = null;
 
   #point = null;
-
-  #isMinimized = null;
-
-  #handleRollupClick = null;
+  #mode = Mode.DEFAULT;
 
   constructor({
     pointListContainer,
     destinationsModel,
     offersModel,
-    onRollupClick,
     onDataChange,
-    isMinimized = true,
+    onModeChange
   }) {
     this.#pointListContainer = pointListContainer;
     this.#destinationsModel = destinationsModel;
     this.#offersModel = offersModel;
-    this.#isMinimized = isMinimized;
-    this.#handleRollupClick = onRollupClick;
     this.#handleDataChange = onDataChange;
+    this.#handleModeChange = onModeChange;
   }
 
   init(point) {
@@ -60,18 +61,15 @@ export default class PointPresenter {
 
     if (previousPointComponent === null || previousPointFormComponent === null) {
       render(this.#pointComponent, this.#pointListContainer);
-      this.#isMinimized = true;
       return;
     }
 
-    if (this.#pointListContainer.contains(previousPointComponent.element)) {
+    if (this.#mode === Mode.DEFAULT) {
       replace(this.#pointComponent, previousPointComponent);
-      this.#isMinimized = true;
     }
 
-    if (this.#pointListContainer.contains(previousPointFormComponent.element)) {
+    if (this.#mode === Mode.FORM) {
       replace(this.#pointFormComponent, previousPointFormComponent);
-      this.#isMinimized = false;
     }
 
     remove(previousPointComponent);
@@ -83,11 +81,16 @@ export default class PointPresenter {
     remove(this.#pointFormComponent);
   }
 
+  resetView() {
+    if (this.#mode !== Mode.DEFAULT) {
+      this.#replaceFormToPoint();
+    }
+  }
+
   #rollupClickHandler = () => {
-    if (this.#isMinimized) {
-      this.#handleRollupClick(this.#point.id);
+    if (this.#mode === Mode.DEFAULT) {
       this.#replacePointToForm();
-    } else {
+    } else if (this.#mode === Mode.FORM) {
       this.#replaceFormToPoint();
     }
   };
@@ -114,19 +117,14 @@ export default class PointPresenter {
 
   #replacePointToForm() {
     replace(this.#pointFormComponent, this.#pointComponent);
-    this.#isMinimized = false;
     document.addEventListener('keydown', this.#handleEscKeyDown);
+    this.#handleModeChange();
+    this.#mode = Mode.FORM;
   }
 
   #replaceFormToPoint() {
     replace(this.#pointComponent, this.#pointFormComponent);
-    this.#isMinimized = true;
+    this.#mode = Mode.DEFAULT;
     document.removeEventListener('keydown', this.#handleEscKeyDown);
   }
-
-  minimize = () => {
-    if (!this.#isMinimized) {
-      this.#replaceFormToPoint();
-    }
-  };
 }
