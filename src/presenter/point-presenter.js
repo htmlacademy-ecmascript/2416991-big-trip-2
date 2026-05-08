@@ -1,4 +1,4 @@
-import { render, replace } from '../framework/render';
+import { remove, render, replace } from '../framework/render';
 import PointFormView from '../view/point-form-view';
 import PointView from '../view/point-view';
 
@@ -33,6 +33,9 @@ export default class PointPresenter {
   init(point) {
     this.#point = point;
 
+    const previousPointComponent = this.#pointComponent;
+    const previousPointFormComponent = this.#pointFormComponent;
+
     this.#pointComponent = new PointView({
       point: this.#point,
       destination: this.#destinationsModel.getDestination(this.#point.destination),
@@ -51,11 +54,29 @@ export default class PointPresenter {
       onRollupClick: this.#rollupClickHandler
     });
 
-    if (this.#isMinimized) {
+    if (previousPointComponent === null || previousPointFormComponent === null) {
       render(this.#pointComponent, this.#pointListContainer);
-    } else {
-      render(this.#pointFormComponent, this.#pointListContainer);
+      this.#isMinimized = true;
+      return;
     }
+
+    if (this.#pointListContainer.contains(previousPointComponent.element)) {
+      replace(this.#pointComponent, previousPointComponent);
+      this.#isMinimized = true;
+    }
+
+    if (this.#pointListContainer.contains(previousPointFormComponent.element)) {
+      replace(this.#pointFormComponent, previousPointFormComponent);
+      this.#isMinimized = false;
+    }
+
+    remove(previousPointComponent);
+    remove(previousPointFormComponent);
+  }
+
+  destroy() {
+    remove(this.#pointComponent);
+    remove(this.#pointFormComponent);
   }
 
   #rollupClickHandler = () => {
