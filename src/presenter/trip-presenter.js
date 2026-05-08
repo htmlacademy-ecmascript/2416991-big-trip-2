@@ -14,6 +14,7 @@ export default class TripPresenter {
   #newPointModel = null;
   #sortComponent = new SortView();
   #noPointsComponent = null;
+  #pointPresenters = new Map();
 
   constructor({ tripContainer, offersModel, destinationsModel, pointsModel, newPointModel }) {
     this.#tripContainer = tripContainer;
@@ -21,6 +22,10 @@ export default class TripPresenter {
     this.#destinationsModel = destinationsModel;
     this.#pointsModel = pointsModel;
     this.#newPointModel = newPointModel;
+  }
+
+  init() {
+    this.#renderBoard();
   }
 
   #renderSort() {
@@ -56,6 +61,7 @@ export default class TripPresenter {
       onRollupClick: this.#handleRollupClick
     });
     pointPresenter.init(point);
+    this.#pointPresenters.set(point.id, pointPresenter);
   }
 
   #renderPoints(points) {
@@ -77,7 +83,8 @@ export default class TripPresenter {
     this.#renderPoints(points);
   }
 
-  init() {
-    this.#renderBoard();
+  #clearPoints() {
+    this.#pointPresenters.forEach((presenter) => presenter.destroy());
+    this.#pointPresenters.clear();
   }
 }
