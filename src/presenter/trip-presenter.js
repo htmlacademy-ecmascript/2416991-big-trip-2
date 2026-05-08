@@ -1,4 +1,4 @@
-import { render, replace } from '../framework/render.js';
+import { remove, render, RenderPosition, replace } from '../framework/render.js';
 import { NoPointsMessages } from '../utils/const.js';
 import NoPointsView from '../view/no-points-view.js';
 import PointFormView from '../view/point-form-view.js';
@@ -13,6 +13,8 @@ export default class TripPresenter {
   #destinationsModel = null;
   #pointsModel = null;
   #newPointModel = null;
+  #sortComponent = new SortView();
+  #noPointsComponent = null;
 
   constructor({ tripContainer, offersModel, destinationsModel, pointsModel, newPointModel }) {
     this.#tripContainer = tripContainer;
@@ -23,9 +25,20 @@ export default class TripPresenter {
   }
 
   #renderSort() {
-    const sortComponent = new SortView();
+    render(this.#sortComponent, this.#tripContainer, RenderPosition.AFTERBEGIN);
+  }
 
-    render(sortComponent, this.#tripContainer);
+  #renderNoPoints(message) {
+    const previousNoPointsComponent = this.#noPointsComponent;
+    this.#noPointsComponent = new NoPointsView(message);
+
+    if (previousNoPointsComponent === null) {
+      render(this.#noPointsComponent, this.#tripContainer);
+      return;
+    }
+
+    replace(this.#noPointsComponent, previousNoPointsComponent);
+    remove(previousNoPointsComponent);
   }
 
   #renderPointsList() {
@@ -62,6 +75,7 @@ export default class TripPresenter {
       offers: this.#offersModel.offers,
       currentDestination: this.#destinationsModel.getDestination(point.destination),
       destinations: this.#destinationsModel.destinations,
+
       onFormSubmit: () => {
         replaceFormToPoint();
         document.removeEventListener('keydown', escKeyDownHandler);
@@ -97,7 +111,7 @@ export default class TripPresenter {
     const points = [...this.#pointsModel.points];
 
     if (points.length === 0) {
-      render(new NoPointsView(NoPointsMessages.EVERYTHING), this.#tripContainer);
+      this.#renderNoPoints(NoPointsMessages.EVERYTHING);
       return;
     }
 
