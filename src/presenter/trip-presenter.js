@@ -63,7 +63,8 @@ export default class TripPresenter {
       pointListContainer: this.#pointsListComponent.element,
       destinationsModel: this.#destinationsModel,
       offersModel: this.#offersModel,
-      onRollupClick: this.#handleRollupClick
+      onRollupClick: this.#handleRollupClick,
+      onDataChange: this.#handlePointChange
     });
     pointPresenter.init(point);
     this.#pointPresenters.set(point.id, pointPresenter);

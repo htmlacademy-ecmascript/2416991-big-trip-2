@@ -6,6 +6,7 @@ export default class PointPresenter {
   #pointListContainer = null;
   #destinationsModel = null;
   #offersModel = null;
+  #handleDataChange = null;
 
   #pointComponent = null;
   #pointFormComponent = null;
@@ -21,13 +22,15 @@ export default class PointPresenter {
     destinationsModel,
     offersModel,
     onRollupClick,
-    isMinimized = true
+    onDataChange,
+    isMinimized = true,
   }) {
     this.#pointListContainer = pointListContainer;
     this.#destinationsModel = destinationsModel;
     this.#offersModel = offersModel;
     this.#isMinimized = isMinimized;
     this.#handleRollupClick = onRollupClick;
+    this.#handleDataChange = onDataChange;
   }
 
   init(point) {
@@ -41,6 +44,7 @@ export default class PointPresenter {
       destination: this.#destinationsModel.getDestination(this.#point.destination),
       selectedOffers: this.#offersModel.getSelectedOffers(this.#point.type, this.#point.offers),
       onRollupClick: this.#rollupClickHandler,
+      onFavoriteClick: this.#handleFavoriteClick
     });
 
     this.#pointFormComponent = new PointFormView({
@@ -95,12 +99,17 @@ export default class PointPresenter {
     }
   };
 
-  #handleFormSubmit = () => {
+  #handleFormSubmit = (point) => {
+    this.#handleDataChange(point);
     this.#replaceFormToPoint();
   };
 
   #handleFormReset = () => {
     this.#replaceFormToPoint();
+  };
+
+  #handleFavoriteClick = () => {
+    this.#handleDataChange({ ...this.#point, isFavorite: !this.#point.isFavorite });
   };
 
   #replacePointToForm() {

@@ -200,10 +200,17 @@ export default class PointFormView extends AbstractView {
   #handleFormReset = null;
   #handleRollupClick = null;
 
-  constructor({ point, selectedOffers, offers, currentDestination, destinations, onFormSubmit, onFormReset, onRollupClick }) {
+  constructor({
+    point,
+    selectedOffers,
+    offers,
+    currentDestination,
+    destinations,
+    onFormSubmit,
+    onFormReset,
+    onRollupClick
+  }) {
     super();
-    // console.log('selectedOffers', selectedOffers);
-    // console.log('offers', offers);
     this.#point = point;
     this.#selectedOffers = selectedOffers;
     this.#offers = offers;
@@ -213,8 +220,8 @@ export default class PointFormView extends AbstractView {
     this.#handleFormReset = onFormReset;
     this.#handleRollupClick = onRollupClick;
 
-    this.element.querySelector('.event.event--edit').addEventListener('submit', this.#handleFormSubmit);
-    this.element.querySelector('.event.event--edit').addEventListener('reset', this.#handleFormReset);
+    this.element.querySelector('form').addEventListener('submit', this.#formSubmitHandler);
+    this.element.querySelector('form').addEventListener('reset', this.#handleFormReset);
     this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#handleRollupClick);
   }
 
@@ -227,4 +234,9 @@ export default class PointFormView extends AbstractView {
       destinations: this.#destinations,
     });
   }
+
+  #formSubmitHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleFormSubmit(this.#point);
+  };
 }
