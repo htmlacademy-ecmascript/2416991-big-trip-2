@@ -52,3 +52,4 @@ export default class SortView extends AbstractView {
     this.#handleSortTypeChange(sortTypeName);
   };
 }
+

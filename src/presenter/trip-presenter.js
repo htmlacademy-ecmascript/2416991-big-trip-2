@@ -1,6 +1,7 @@
 import { remove, render, RenderPosition, replace } from '../framework/render.js';
 import { NoPointsMessages, SortItem } from '../utils/const.js';
 import { updateItem } from '../utils/data.js';
+import { sortPoints } from '../utils/sort.js';
 import NoPointsView from '../view/no-points-view.js';
 import PointsListView from '../view/points-list-view.js';
 import SortView from '../view/sort-view.js';
@@ -34,6 +35,8 @@ export default class TripPresenter {
     this.#renderBoard();
   }
 
+  #getSortedPoints = () => sortPoints(this.#points, this.#currentSortType);
+
   #renderSort() {
     this.#sortComponent = new SortView({
       currentSortType: this.#currentSortType,
@@ -45,11 +48,13 @@ export default class TripPresenter {
 
   #handleSortTypeChange = (sortType) => {
     if (this.#currentSortType === sortType) {
-      // return;
+      return;
     }
-    // - Сортируем задачи
-    // - Очищаем список
-    // - Рендерим список заново
+    this.#currentSortType = sortType;
+    const sortedPoints = this.#getSortedPoints();
+
+    this.#clearPoints();
+    this.#renderPoints(sortedPoints);
   };
 
   #renderNoPoints(message) {
@@ -102,9 +107,11 @@ export default class TripPresenter {
       return;
     }
 
+    const sortedPoints = this.#getSortedPoints();
+
     this.#renderSort();
     this.#renderPointsList();
-    this.#renderPoints(this.#points);
+    this.#renderPoints(sortedPoints);
   }
 
   #clearPoints() {
