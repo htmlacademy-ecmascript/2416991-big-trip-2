@@ -24,5 +24,33 @@ const NoPointsMessages = {
   FUTURE: 'There are no future events now'
 };
 
-export { DEFAULT_POINT, DESTINATION_ID_START, NoPointsMessages, POINT_TYPES };
+const SortItem = {
+  DEFAULT: {
+    name: 'day',
+    id: 'sort-day',
+    isDisabled: false
+  },
+  EVENT: {
+    name: 'event',
+    id: 'sort-event',
+    isDisabled: true
+  },
+  TIME: {
+    name: 'time',
+    id: 'sort-time',
+    isDisabled: false
+  },
+  PRICE: {
+    name: 'price',
+    id: 'sort-price',
+    isDisabled: false
+  },
+  OFFER: {
+    name: 'offer',
+    id: 'sort-offer',
+    isDisabled: true
+  }
+};
+
+export { DEFAULT_POINT, DESTINATION_ID_START, NoPointsMessages, POINT_TYPES, SortItem };
 
