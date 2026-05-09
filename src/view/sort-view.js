@@ -26,13 +26,29 @@ const createSortTemplate = (currentSortType) => {
 };
 
 export default class SortView extends AbstractView {
-  #currentSortType = SortItem.DEFAULT.name;
-  constructor(currentSortType) {
+  #currentSortType = null;
+  #handleSortTypeChange = null;
+
+  constructor({currentSortType, onSortTypeChange}) {
     super();
     this.#currentSortType = currentSortType;
+    this.#handleSortTypeChange = onSortTypeChange;
+
+    this.element.addEventListener('change', this.#sortTypeChangeHandler);
   }
 
   get template() {
     return createSortTemplate(this.#currentSortType);
   }
+
+  #sortTypeChangeHandler = (evt) => {
+    evt.preventDefault();
+    const value = evt.target.value;
+
+    const sortType = Object.values(SortItem).find((item) => item.id === value);
+
+    const sortTypeName = sortType ? sortType.name : null;
+
+    this.#handleSortTypeChange(sortTypeName);
+  };
 }

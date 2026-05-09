@@ -1,5 +1,5 @@
 import { remove, render, RenderPosition, replace } from '../framework/render.js';
-import { NoPointsMessages } from '../utils/const.js';
+import { NoPointsMessages, SortItem } from '../utils/const.js';
 import { updateItem } from '../utils/data.js';
 import NoPointsView from '../view/no-points-view.js';
 import PointsListView from '../view/points-list-view.js';
@@ -13,7 +13,8 @@ export default class TripPresenter {
   #destinationsModel = null;
   #pointsModel = null;
   #newPointModel = null;
-  #sortComponent = new SortView();
+  #sortComponent = null;
+  #currentSortType = SortItem.DEFAULT.name;
   #noPointsComponent = null;
   #pointPresenters = new Map();
 
@@ -34,8 +35,22 @@ export default class TripPresenter {
   }
 
   #renderSort() {
+    this.#sortComponent = new SortView({
+      currentSortType: this.#currentSortType,
+      onSortTypeChange: this.#handleSortTypeChange
+    });
+
     render(this.#sortComponent, this.#tripContainer, RenderPosition.AFTERBEGIN);
   }
+
+  #handleSortTypeChange = (sortType) => {
+    if (this.#currentSortType === sortType) {
+      // return;
+    }
+    // - Сортируем задачи
+    // - Очищаем список
+    // - Рендерим список заново
+  };
 
   #renderNoPoints(message) {
     const previousNoPointsComponent = this.#noPointsComponent;
