@@ -129,8 +129,4 @@ export default class PointPresenter {
     this.#mode = Mode.DEFAULT;
     document.removeEventListener('keydown', this.#handleEscKeyDown);
   }
-
-  #getDestination = (id) => this.#destinationsModel.getDestination(id);
-
-  #getOffersByType = (type) => this.#offersModel.getOffersByType(type);
 }
