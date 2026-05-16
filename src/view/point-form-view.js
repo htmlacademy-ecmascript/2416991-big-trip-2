@@ -2,6 +2,9 @@ import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { POINT_TYPES } from '../utils/const.js';
 import { formatToDateInput } from '../utils/date.js';
 import { capitalize } from '../utils/text.js';
+import flatpickr from 'flatpickr';
+
+import 'flatpickr/dist/flatpickr.min.css';
 
 const createTypeItemTemplate = (type, id) => `
   <div class="event__type-item">
