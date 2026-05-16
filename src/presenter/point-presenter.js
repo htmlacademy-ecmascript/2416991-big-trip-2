@@ -36,7 +36,6 @@ export default class PointPresenter {
 
   init(point) {
     this.#point = point;
-
     const previousPointComponent = this.#pointComponent;
     const previousPointFormComponent = this.#pointFormComponent;
 
@@ -45,12 +44,11 @@ export default class PointPresenter {
       destination: this.#destinationsModel.getDestination(this.#point.destination),
       selectedOffers: this.#offersModel.getSelectedOffers(this.#point.type, this.#point.offers),
       onRollupClick: this.#rollupClickHandler,
-      onFavoriteClick: this.#handleFavoriteClick
+      onFavoriteClick: this.#handleFavoriteClick,
     });
 
     this.#pointFormComponent = new PointFormView({
       point: this.#point,
-      selectedOffers: this.#offersModel.getSelectedOffers(this.#point.type, this.#point.offers),
       offers: this.#offersModel.offers,
       currentDestination: this.#destinationsModel.getDestination(this.#point.destination),
       destinations: this.#destinationsModel.destinations,
@@ -83,6 +81,7 @@ export default class PointPresenter {
 
   resetView() {
     if (this.#mode !== Mode.DEFAULT) {
+      this.#pointFormComponent.reset(this.#point);
       this.#replaceFormToPoint();
     }
   }
@@ -91,6 +90,7 @@ export default class PointPresenter {
     if (this.#mode === Mode.DEFAULT) {
       this.#replacePointToForm();
     } else if (this.#mode === Mode.FORM) {
+      this.#pointFormComponent.reset(this.#point);
       this.#replaceFormToPoint();
     }
   };
@@ -98,6 +98,7 @@ export default class PointPresenter {
   #handleEscKeyDown = (evt) => {
     if (evt.key === 'Escape') {
       evt.preventDefault();
+      this.#pointFormComponent.reset(this.#point);
       this.#replaceFormToPoint();
     }
   };
@@ -108,6 +109,7 @@ export default class PointPresenter {
   };
 
   #handleFormReset = () => {
+    this.#pointFormComponent.reset(this.#point);
     this.#replaceFormToPoint();
   };
 
@@ -127,4 +129,8 @@ export default class PointPresenter {
     this.#mode = Mode.DEFAULT;
     document.removeEventListener('keydown', this.#handleEscKeyDown);
   }
+
+  #getDestination = (id) => this.#destinationsModel.getDestination(id);
+
+  #getOffersByType = (type) => this.#offersModel.getOffersByType(type);
 }

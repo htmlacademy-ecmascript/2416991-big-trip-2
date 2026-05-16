@@ -52,5 +52,13 @@ const SortItem = {
   }
 };
 
-export { DEFAULT_POINT, DESTINATION_ID_START, NoPointsMessages, POINT_TYPES, SortItem };
+const USER_DESTINATION = {
+  id: 'user-id',
+  name: 'user-destination',
+  description: '',
+  pictures: []
+
+};
+
+export { DEFAULT_POINT, DESTINATION_ID_START, NoPointsMessages, POINT_TYPES, SortItem, USER_DESTINATION };
 
