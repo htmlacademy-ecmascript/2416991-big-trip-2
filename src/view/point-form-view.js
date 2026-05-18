@@ -183,7 +183,7 @@ const createPointFormTemplate = ({
     type,
   } = point;
 
-  const offersOfCurrentType = offers.find((offer) => offer.type === type).offers;
+  const offersOfCurrentType = offers.find((offer) => offer.type === type).offers || [];
   const isNewPoint = id === null;
 
   return `
