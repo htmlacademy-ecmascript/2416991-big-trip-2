@@ -260,7 +260,11 @@ export default class PointFormView extends AbstractStatefulView {
   _restoreHandlers() {
     this.element.querySelector('form').addEventListener('submit', this.#formSubmitHandler);
     this.element.querySelector('form').addEventListener('reset', this.#handleFormReset);
-    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#handleRollupClick);
+
+    const rollupButton = this.element.querySelector('.event__rollup-btn');
+    if (rollupButton) {
+      rollupButton.addEventListener('click', this.#handleRollupClick);
+    }
 
     this.element.querySelector('.event__type-list').addEventListener('click', this.#typeClickHandler);
     this.element.querySelector('.event__input--destination').addEventListener('input', this.#destinationChangeHandler);
