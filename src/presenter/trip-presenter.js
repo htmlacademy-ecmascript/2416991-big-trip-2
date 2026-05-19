@@ -1,5 +1,6 @@
 import { remove, render, RenderPosition, replace } from '../framework/render.js';
 import { NoPointsMessages, SortItem, UpdateType, UserAction } from '../utils/const.js';
+import { filter } from '../utils/filter.js';
 
 import { sortPoints } from '../utils/sort.js';
 import NoPointsView from '../view/no-points-view.js';
@@ -14,6 +15,7 @@ export default class TripPresenter {
   #destinationsModel = null;
   #pointsModel = null;
   #newPointModel = null;
+  #filterModel = null;
   #sortComponent = null;
   #currentSortType = SortItem.DEFAULT.name;
   #noPointsComponent = null;
@@ -21,18 +23,30 @@ export default class TripPresenter {
 
   #points = [];
 
-  constructor({ tripContainer, offersModel, destinationsModel, pointsModel, newPointModel }) {
+  constructor({
+    tripContainer,
+    offersModel,
+    destinationsModel,
+    pointsModel,
+    newPointModel,
+    filterModel
+  }) {
     this.#tripContainer = tripContainer;
     this.#offersModel = offersModel;
     this.#destinationsModel = destinationsModel;
     this.#pointsModel = pointsModel;
     this.#newPointModel = newPointModel;
+    this.#filterModel = filterModel;
 
     this.#pointsModel.addObserver(this.#handleModelEvent);
+    this.#filterModel.addObserver(this.#handleModelEvent);
   }
 
   get points() {
-    return sortPoints(this.#pointsModel.points, this.#currentSortType);
+    const points = this.#pointsModel.points;
+    const currentFilter = this.#filterModel.filter;
+    const filteredPoints = filter[currentFilter](points);
+    return sortPoints(filteredPoints, this.#currentSortType);
   }
 
   init() {

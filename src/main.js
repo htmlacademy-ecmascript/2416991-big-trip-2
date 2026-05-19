@@ -10,7 +10,7 @@ import NewEventButtonView from './view/new-event-button-view.js';
 
 const filterContainer = document.querySelector('.trip-controls__filters');
 const mainContainer = document.querySelector('.trip-main');
-const eventsContainer = document.querySelector('.trip-events');
+const tripContainer = document.querySelector('.trip-events');
 
 const filterModel = new FilterModel();
 const offersModel = new OffersModel();
@@ -19,8 +19,20 @@ const pointsModel = new PointsModel();
 
 const newPointModel = new NewPointModel(destinationsModel);
 
-const filterPresenter = new FilterPresenter({ filterContainer, pointsModel, filterModel});
-const tripPresenter = new TripPresenter({ tripContainer: eventsContainer, offersModel, destinationsModel, pointsModel, newPointModel });
+const filterPresenter = new FilterPresenter({
+  filterContainer,
+  pointsModel,
+  filterModel
+});
+
+const tripPresenter = new TripPresenter({
+  tripContainer,
+  offersModel,
+  destinationsModel,
+  pointsModel,
+  newPointModel,
+  filterModel
+});
 
 render(new NewEventButtonView, mainContainer);
 
