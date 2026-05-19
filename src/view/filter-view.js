@@ -1,35 +1,39 @@
 import dayjs from 'dayjs';
 import AbstractView from '../framework/view/abstract-view.js';
+import { FilterType } from '../utils/const.js';
+import { capitalize } from '../utils/text.js';
 
-const createFilterTemplate = (points) => {
+const isFilterDisabled = (filterType, points) => {
   const now = dayjs();
-  const hasFutureDates = points.some((point) => dayjs(point.dateFrom).isAfter(now));
-  const hasPresentDates = points.some((point) =>
-    (dayjs(point.dateFrom).isBefore(now) || dayjs(point.dateFrom).isSame(now)) && dayjs(point.dateTo).isAfter(now)
-  );
-  const hasPastDates = points.some((point) => dayjs(point.dateTo).isBefore(now));
+  switch (filterType) {
+    case FilterType.FUTURE:
+      return !points.some((point) => dayjs(point.dateFrom).isAfter(now));
+    case FilterType.PAST:
+      return !points.some((point) => dayjs(point.dateTo).isBefore(now));
+    case FilterType.PRESENT:
+      return !points.some((point) =>
+        (dayjs(point.dateFrom).isBefore(now) || dayjs(point.dateFrom).isSame(now)) && dayjs(point.dateTo).isAfter(now)
+      );
+    default:
+      return false;
+  }
+};
+
+const createFilterItemTemplate = (filterType, isChecked, points) => `
+  <div class="trip-filters__filter">
+    <input id="filter-${filterType}" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="${filterType}" ${isChecked ? 'checked' : ''} ${isFilterDisabled(filterType, points) ? 'disabled' : ''}>
+    <label class="trip-filters__filter-label" for="filter-${filterType}">${capitalize(filterType)}</label>
+  </div>
+`;
+
+const createFilterTemplate = (points, currentFilter) => {
+  const filterItems = Object.values(FilterType)
+    .map((item) => createFilterItemTemplate(item, item.name === currentFilter, points))
+    .join('\n');
 
   return `
     <form class="trip-filters" action="#" method="get">
-      <div class="trip-filters__filter">
-        <input id="filter-everything" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="everything" checked="">
-        <label class="trip-filters__filter-label" for="filter-everything">Everything</label>
-      </div>
-
-      <div class="trip-filters__filter">
-        <input id="filter-future" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="future" ${hasFutureDates ? '' : 'disabled'}>
-        <label class="trip-filters__filter-label" for="filter-future">Future</label>
-      </div>
-
-      <div class="trip-filters__filter">
-        <input id="filter-present" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="present" ${hasPresentDates ? '' : 'disabled'}>
-        <label class="trip-filters__filter-label" for="filter-present">Present</label>
-      </div>
-
-      <div class="trip-filters__filter">
-        <input id="filter-past" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="past" ${hasPastDates ? '' : 'disabled'}>
-        <label class="trip-filters__filter-label" for="filter-past">Past</label>
-      </div>
+      ${filterItems}
 
       <button class="visually-hidden" type="submit">Accept filter</button>
     </form>
@@ -38,12 +42,24 @@ const createFilterTemplate = (points) => {
 
 export default class FilterView extends AbstractView {
   #points = null;
-  constructor(points) {
+  #currentFilter = null;
+  #handleFilterChange = null;
+
+  constructor({points, currentFilter, onFilterChange}) {
     super();
     this.#points = points;
+    this.#currentFilter = currentFilter;
+    this.#handleFilterChange = onFilterChange;
+
+    this.element.addEventListener('change', this.#filterChangeHandler);
   }
 
   get template() {
-    return createFilterTemplate(this.#points);
+    return createFilterTemplate(this.#points, this.#currentFilter);
   }
+
+  #filterChangeHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleFilterChange(evt.target.value);
+  };
 }

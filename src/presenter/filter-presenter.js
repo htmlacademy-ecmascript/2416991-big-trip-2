@@ -2,14 +2,22 @@ import { render } from '../framework/render';
 import FilterView from '../view/filter-view';
 
 export default class FilterPresenter {
-  #pointsModel = null;
   #filterContainer = null;
-  constructor({ filterContainer, pointsModel }) {
+  #pointsModel = null;
+  #filterModel = null;
+
+  constructor({ filterContainer, pointsModel, filterModel }) {
     this.#filterContainer = filterContainer;
     this.#pointsModel = pointsModel;
+    this.#filterModel = filterModel;
   }
 
   init() {
-    render(new FilterView(this.#pointsModel.points), this.#filterContainer);
+    const currentFilter = this.#filterModel.filter;
+    render(new FilterView({
+      points: this.#pointsModel.points,
+      currentFilter,
+      onFilterChange: () => { }
+    }), this.#filterContainer);
   }
 }

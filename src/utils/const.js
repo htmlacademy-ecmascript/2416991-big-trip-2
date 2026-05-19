@@ -72,5 +72,12 @@ const UpdateType = {
   MAJOR: 'MAJOR'
 };
 
-export { DEFAULT_POINT, DESTINATION_ID_START, NoPointsMessages, POINT_TYPES, SortItem, UpdateType, USER_DESTINATION, UserAction };
+const FilterType = {
+  EVERYTHING: 'everything',
+  FUTURE: 'future',
+  PRESENT: 'present',
+  PAST: 'past'
+};
+
+export { DEFAULT_POINT, DESTINATION_ID_START, FilterType, NoPointsMessages, POINT_TYPES, SortItem, UpdateType, USER_DESTINATION, UserAction };
 
