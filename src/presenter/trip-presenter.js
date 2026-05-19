@@ -35,6 +35,10 @@ export default class TripPresenter {
     this.#renderBoard();
   }
 
+  get points() {
+    return this.#pointsModel.points;
+  }
+
   #getSortedPoints = () => sortPoints(this.#points, this.#currentSortType);
 
   #renderSort() {
