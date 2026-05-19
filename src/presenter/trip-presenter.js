@@ -27,8 +27,6 @@ export default class TripPresenter {
     this.#destinationsModel = destinationsModel;
     this.#pointsModel = pointsModel;
     this.#newPointModel = newPointModel;
-
-    this.#points = [...this.#pointsModel.points];
   }
 
   init() {
@@ -36,10 +34,8 @@ export default class TripPresenter {
   }
 
   get points() {
-    return this.#pointsModel.points;
+    return sortPoints(this.#pointsModel.points, this.#currentSortType);
   }
-
-  #getSortedPoints = () => sortPoints(this.#points, this.#currentSortType);
 
   #renderSort() {
     this.#sortComponent = new SortView({
@@ -55,10 +51,9 @@ export default class TripPresenter {
       return;
     }
     this.#currentSortType = sortType;
-    const sortedPoints = this.#getSortedPoints();
 
     this.#clearPoints();
-    this.#renderPoints(sortedPoints);
+    this.#renderPoints();
   };
 
   #renderNoPoints(message) {
@@ -79,7 +74,9 @@ export default class TripPresenter {
   }
 
   #handlePointChange = (updatedPoint) => {
-    this.#points = updateItem(this.#points, updatedPoint);
+    console.log('здесь будем вызывать обновление модели');
+    // this.#points = updateItem(this.#points, updatedPoint);
+
     this.#pointPresenters.get(updatedPoint.id).init(updatedPoint);
   };
 
@@ -99,23 +96,21 @@ export default class TripPresenter {
     this.#pointPresenters.set(point.id, pointPresenter);
   }
 
-  #renderPoints(points) {
-    points.forEach((point) => {
+  #renderPoints() {
+    this.points.forEach((point) => {
       this.#renderPoint(point);
     });
   }
 
   #renderBoard() {
-    if (this.#points.length === 0) {
+    if (this.points.length === 0) {
       this.#renderNoPoints(NoPointsMessages.EVERYTHING);
       return;
     }
 
-    const sortedPoints = this.#getSortedPoints();
-
     this.#renderSort();
     this.#renderPointsList();
-    this.#renderPoints(sortedPoints);
+    this.#renderPoints();
   }
 
   #clearPoints() {
