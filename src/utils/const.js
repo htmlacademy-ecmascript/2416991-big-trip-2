@@ -60,5 +60,17 @@ const USER_DESTINATION = {
 
 };
 
-export { DEFAULT_POINT, DESTINATION_ID_START, NoPointsMessages, POINT_TYPES, SortItem, USER_DESTINATION };
+const UserAction = {
+  UPDATE_POINT: 'UPDATE_POINT',
+  ADD_POINT: 'ADD_POINT',
+  DELETE_POINT: 'DELETE_POINT'
+};
+
+const UpdateType = {
+  PATCH: 'PATCH',
+  MINOR: 'MINOR',
+  MAJOR: 'MAJOR'
+};
+
+export { DEFAULT_POINT, DESTINATION_ID_START, NoPointsMessages, POINT_TYPES, SortItem, UpdateType, USER_DESTINATION, UserAction };
 

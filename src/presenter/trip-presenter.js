@@ -1,6 +1,6 @@
 import { remove, render, RenderPosition, replace } from '../framework/render.js';
 import { NoPointsMessages, SortItem } from '../utils/const.js';
-import { updateItem } from '../utils/data.js';
+
 import { sortPoints } from '../utils/sort.js';
 import NoPointsView from '../view/no-points-view.js';
 import PointsListView from '../view/points-list-view.js';
@@ -27,15 +27,33 @@ export default class TripPresenter {
     this.#destinationsModel = destinationsModel;
     this.#pointsModel = pointsModel;
     this.#newPointModel = newPointModel;
+
+    this.#pointsModel.addObserver(this.#handleModelEvent);
+  }
+
+  get points() {
+    return sortPoints(this.#pointsModel.points, this.#currentSortType);
   }
 
   init() {
     this.#renderBoard();
   }
 
-  get points() {
-    return sortPoints(this.#pointsModel.points, this.#currentSortType);
-  }
+  #handleViewAction = (actionType, updateType, update) => {
+    console.log(actionType, updateType, update);
+    // Здесь будем вызывать обновление модели.
+    // actionType - действие пользователя, нужно чтобы понять, какой метод модели вызвать
+    // updateType - тип изменений, нужно чтобы понять, что после нужно обновить
+    // update - обновленные данные
+  };
+
+  #handleModelEvent = (updateType, data) => {
+    console.log(updateType, data);
+    // В зависимости от типа изменений решаем, что делать:
+    // - обновить часть списка (например, когда поменялось описание)
+    // - обновить список (например, когда задача ушла в архив)
+    // - обновить всю доску (например, при переключении фильтра)
+  };
 
   #renderSort() {
     this.#sortComponent = new SortView({
@@ -73,13 +91,6 @@ export default class TripPresenter {
     render(this.#pointsListComponent, this.#tripContainer);
   }
 
-  #handlePointChange = (updatedPoint) => {
-    console.log('здесь будем вызывать обновление модели');
-    // this.#points = updateItem(this.#points, updatedPoint);
-
-    this.#pointPresenters.get(updatedPoint.id).init(updatedPoint);
-  };
-
   #handleModeChange = () => {
     this.#pointPresenters.forEach((presenter) => presenter.resetView());
   };
@@ -89,7 +100,7 @@ export default class TripPresenter {
       pointListContainer: this.#pointsListComponent.element,
       destinationsModel: this.#destinationsModel,
       offersModel: this.#offersModel,
-      onDataChange: this.#handlePointChange,
+      onDataChange: this.#handleViewAction,
       onModeChange: this.#handleModeChange
     });
     pointPresenter.init(point);

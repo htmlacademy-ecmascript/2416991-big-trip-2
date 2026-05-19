@@ -1,4 +1,5 @@
 import { remove, render, replace } from '../framework/render';
+import { UpdateType, UserAction } from '../utils/const';
 import PointFormView from '../view/point-form-view';
 import PointView from '../view/point-view';
 
@@ -53,7 +54,7 @@ export default class PointPresenter {
       currentDestination: this.#destinationsModel.getDestination(this.#point.destination),
       destinations: this.#destinationsModel.destinations,
       onFormSubmit: this.#handleFormSubmit,
-      onFormReset: this.#handleFormReset,
+      onFormReset: this.#deleteClickHandler,
       onRollupClick: this.#rollupClickHandler
     });
 
@@ -104,17 +105,30 @@ export default class PointPresenter {
   };
 
   #handleFormSubmit = (point) => {
-    this.#handleDataChange(point);
+    this.#handleDataChange(
+      UserAction.UPDATE_POINT,
+      //TODO не факт, что Минорный тип, нужно проверять дату
+      UpdateType.MINOR,
+      point
+    );
     this.#replaceFormToPoint();
   };
 
-  #handleFormReset = () => {
-    this.#pointFormComponent.reset(this.#point);
-    this.#replaceFormToPoint();
+  #deleteClickHandler = () => {
+    this.#handleDataChange(
+      UserAction.DELETE_POINT,
+      UpdateType.MINOR,
+      this.#point
+    );
   };
 
   #handleFavoriteClick = () => {
-    this.#handleDataChange({ ...this.#point, isFavorite: !this.#point.isFavorite });
+    this.#handleDataChange(
+      UserAction.UPDATE_POINT,
+      // не факт, что Patch
+      UpdateType.PATCH,
+      { ...this.#point, isFavorite: !this.#point.isFavorite }
+    );
   };
 
   #replacePointToForm() {
