@@ -23,7 +23,7 @@ const calculateEventDuration = (startDateIso, endDateIso) => {
   return parts.join(' ');
 };
 
-const formatToDateInput = (date) => dayjs(date).format('YY/MM/DD HH:mm');
+const formatToDateInput = (date) => dayjs(date).format('DD/MM/YY HH:mm');
 
 export { calculateEventDuration, formatToDateInput, formatToTime };
 
