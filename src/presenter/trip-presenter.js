@@ -59,10 +59,14 @@ export default class TripPresenter {
         this.#pointPresenters.get(data.id).init(data);
         break;
       case UpdateType.MINOR:
-        // обновить список
+        this.#clearBoard();
+        this.#renderBoard();
         break;
       case UpdateType.MAJOR:
-        // обновить всё
+        this.#clearBoard({
+          resetSortType: true
+        });
+        this.#renderBoard();
         break;
     }
   };
@@ -139,5 +143,20 @@ export default class TripPresenter {
   #clearPoints() {
     this.#pointPresenters.forEach((presenter) => presenter.destroy());
     this.#pointPresenters.clear();
+
+  }
+
+  #clearBoard({ resetSortType = false } = {}) {
+    this.#clearPoints();
+    remove(this.#sortComponent);
+    remove(this.#pointsListComponent);
+
+    if (resetSortType) {
+      this.#currentSortType = SortItem.DEFAULT.name;
+    }
+
+    if (this.#noPointsComponent) {
+      remove(this.#noPointsComponent);
+    }
   }
 }
