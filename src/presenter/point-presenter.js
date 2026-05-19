@@ -1,5 +1,6 @@
 import { remove, render, replace } from '../framework/render';
 import { UpdateType, UserAction } from '../utils/const';
+import { isDatesEqual } from '../utils/date';
 import PointFormView from '../view/point-form-view';
 import PointView from '../view/point-view';
 
@@ -105,13 +106,12 @@ export default class PointPresenter {
   };
 
   #handleFormSubmit = (point) => {
+    const isPatchUpdate = isDatesEqual(this.#point, point);
     this.#handleDataChange(
       UserAction.UPDATE_POINT,
-      //TODO не факт, что Минорный тип, нужно проверять дату
-      UpdateType.MINOR,
+      isPatchUpdate ? UpdateType.PATCH : UpdateType.MINOR,
       point
     );
-    this.#replaceFormToPoint();
   };
 
   #deleteClickHandler = () => {
@@ -125,7 +125,6 @@ export default class PointPresenter {
   #handleFavoriteClick = () => {
     this.#handleDataChange(
       UserAction.UPDATE_POINT,
-      // не факт, что Patch
       UpdateType.PATCH,
       { ...this.#point, isFavorite: !this.#point.isFavorite }
     );

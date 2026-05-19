@@ -25,5 +25,12 @@ const calculateEventDuration = (startDateIso, endDateIso) => {
 
 const formatToDateInput = (date) => dayjs(date).format('DD/MM/YY HH:mm');
 
-export { calculateEventDuration, formatToDateInput, formatToTime };
+const isDatesEqual = (pointA, pointB) => {
+  const isDateFromSame = dayjs(pointA.dateFrom).isSame(dayjs(pointB.dateFrom));
+  const isDateToSame = dayjs(pointA.dateTo).isSame(dayjs(pointB.dateTo));
+
+  return isDateFromSame && isDateToSame;
+};
+
+export { calculateEventDuration, formatToDateInput, formatToTime, isDatesEqual };
 
