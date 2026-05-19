@@ -1,5 +1,5 @@
 import { remove, render, RenderPosition, replace } from '../framework/render.js';
-import { NoPointsMessages, SortItem, UpdateType, UserAction } from '../utils/const.js';
+import { FilterType, NoPointsMessages, SortItem, UpdateType, UserAction } from '../utils/const.js';
 import { filter } from '../utils/filter.js';
 
 import { sortPoints } from '../utils/sort.js';
@@ -20,6 +20,7 @@ export default class TripPresenter {
   #currentSortType = SortItem.DEFAULT.name;
   #noPointsComponent = null;
   #pointPresenters = new Map();
+  #currentFilter = FilterType.EVERYTHING;
 
   #points = [];
 
@@ -43,9 +44,9 @@ export default class TripPresenter {
   }
 
   get points() {
+    this.#currentFilter = this.#filterModel.filter;
     const points = this.#pointsModel.points;
-    const currentFilter = this.#filterModel.filter;
-    const filteredPoints = filter[currentFilter](points);
+    const filteredPoints = filter[this.#currentFilter](points);
     return sortPoints(filteredPoints, this.#currentSortType);
   }
 
@@ -104,9 +105,11 @@ export default class TripPresenter {
     this.#renderPoints();
   };
 
-  #renderNoPoints(message) {
+  #renderNoPoints() {
     const previousNoPointsComponent = this.#noPointsComponent;
-    this.#noPointsComponent = new NoPointsView(message);
+    this.#noPointsComponent = new NoPointsView({
+      currentFilter: this.#currentFilter
+    });
 
     if (previousNoPointsComponent === null) {
       render(this.#noPointsComponent, this.#tripContainer);

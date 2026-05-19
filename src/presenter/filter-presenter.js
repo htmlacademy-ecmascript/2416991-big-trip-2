@@ -20,7 +20,6 @@ export default class FilterPresenter {
 
   init() {
     const prevFilterComponent = this.#filterComponent;
-
     this.#filterComponent = new FilterView({
       points: this.#pointsModel.points,
       currentFilter: this.#filterModel.filter,

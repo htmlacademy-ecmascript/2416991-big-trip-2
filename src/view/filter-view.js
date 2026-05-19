@@ -28,7 +28,7 @@ const createFilterItemTemplate = (filterType, isChecked, points) => `
 
 const createFilterTemplate = (points, currentFilter) => {
   const filterItems = Object.values(FilterType)
-    .map((item) => createFilterItemTemplate(item, item.name === currentFilter, points))
+    .map((item) => createFilterItemTemplate(item, item === currentFilter, points))
     .join('\n');
 
   return `
@@ -45,7 +45,7 @@ export default class FilterView extends AbstractView {
   #currentFilter = null;
   #handleFilterChange = null;
 
-  constructor({points, currentFilter, onFilterChange}) {
+  constructor({ points, currentFilter, onFilterChange }) {
     super();
     this.#points = points;
     this.#currentFilter = currentFilter;
