@@ -276,7 +276,7 @@ export default class PointFormView extends AbstractStatefulView {
 
     this.element.querySelector('.event__type-list').addEventListener('click', this.#typeClickHandler);
     this.element.querySelector('.event__input--destination').addEventListener('change', this.#destinationChangeHandler);
-    this.element.querySelector('.event__input--price').addEventListener('change', this.#priceChangeHandler);
+    this.element.querySelector('.event__input--price').addEventListener('input', this.#priceChangeHandler);
     this.element.querySelector('.event__available-offers').addEventListener('click', this.#offerClickHandler);
 
     this.#setDatePickers();
@@ -351,9 +351,15 @@ export default class PointFormView extends AbstractStatefulView {
   }
 
   #priceChangeHandler = (evt) => {
-    this.updateElement({
+    evt.preventDefault();
+    this._setState({
       basePrice: evt.target.value
     });
+
+    const submitButton = this.element.querySelector('.event__save-btn');
+    const currentDestination = this.#getCurrentDestination();
+    const isSubmitDisabled = !isPointDataValid(this._state, currentDestination, this.#destinations);
+    submitButton.disabled = isSubmitDisabled;
   };
 
   #offerClickHandler = (evt) => {
