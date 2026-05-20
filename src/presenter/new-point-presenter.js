@@ -3,7 +3,7 @@ import { remove, render, RenderPosition } from '../framework/render';
 import { DEFAULT_POINT, UpdateType, UserAction } from '../utils/const';
 import PointFormView from '../view/point-form-view';
 
-export default class NewEventPresenter {
+export default class NewPointPresenter {
   #offers = null;
   #destinations = null;
   #handleDataChange = null;
@@ -31,8 +31,7 @@ export default class NewEventPresenter {
     this.#pointFormComponent = new PointFormView({
       point: {
         ...DEFAULT_POINT,
-        id: nanoid(),
-        destination: this.#destinations[0].id
+        id: nanoid()
       },
       offers: this.#offers,
       destinations: this.#destinations,

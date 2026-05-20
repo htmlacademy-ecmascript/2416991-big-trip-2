@@ -1,12 +1,11 @@
 import { render } from './framework/render.js';
 import DestinationsModel from './model/destinations-model.js';
 import FilterModel from './model/filter-model.js';
-import NewPointModel from './model/new-point-model.js';
 import OffersModel from './model/offers-model.js';
 import PointsModel from './model/points-model.js';
 import FilterPresenter from './presenter/filter-presenter.js';
 import TripPresenter from './presenter/trip-presenter.js';
-import NewEventButtonView from './view/new-event-button-view.js';
+import NewPointButtonView from './view/new-point-button-view.js';
 
 const filterContainer = document.querySelector('.trip-controls__filters');
 const mainContainer = document.querySelector('.trip-main');
@@ -16,8 +15,6 @@ const filterModel = new FilterModel();
 const offersModel = new OffersModel();
 const destinationsModel = new DestinationsModel();
 const pointsModel = new PointsModel();
-
-const newPointModel = new NewPointModel(destinationsModel);
 
 const filterPresenter = new FilterPresenter({
   filterContainer,
@@ -30,25 +27,25 @@ const tripPresenter = new TripPresenter({
   offersModel,
   destinationsModel,
   pointsModel,
-  newPointModel,
   filterModel,
-  onNewEventDestroy: handleNewEventFormClose
+  onNewPointDestroy: handleNewPointFormClose
 });
 
-const newEventButtonComponent = new NewEventButtonView({
-  onClick: handleNewEventButtonClick
+const newPointButtonComponent = new NewPointButtonView({
+  onClick: handleNewPointButtonClick
 });
 
-function handleNewEventFormClose() {
-  newEventButtonComponent.element.disabled = false;
+function handleNewPointFormClose() {
+  newPointButtonComponent.element.disabled = false;
 }
 
-function handleNewEventButtonClick() {
-  tripPresenter.createEvent();
-  newEventButtonComponent.element.disabled = true;
+
+function handleNewPointButtonClick() {
+  tripPresenter.createPoint();
+  newPointButtonComponent.element.disabled = true;
 }
 
-render(newEventButtonComponent, mainContainer);
+render(newPointButtonComponent, mainContainer);
 
 filterPresenter.init();
 tripPresenter.init();

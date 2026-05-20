@@ -1,9 +1,9 @@
 import flatpickr from 'flatpickr';
+import he from 'he';
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { POINT_TYPES } from '../utils/const.js';
 import { formatToDateInput } from '../utils/date.js';
 import { capitalize } from '../utils/text.js';
-import he from 'he';
 
 import 'flatpickr/dist/flatpickr.min.css';
 import { isPointDataValid } from '../utils/utils.js';
@@ -67,10 +67,10 @@ const createDestinationInputTemplate = ({
 const createDateInterfaceTemplate = (dateFrom, dateTo, id) => `
   <div class="event__field-group  event__field-group--time">
     <label class="visually-hidden" for="event-start-time-${id}">From</label>
-    <input class="event__input  event__input--time" id="event-start-time-${id}" type="text" name="event-start-time" value="${formatToDateInput(dateFrom)}">
+    <input class="event__input  event__input--time" id="event-start-time-${id}" type="text" name="event-start-time" value="${dateFrom ? formatToDateInput(dateFrom) : ''}">
     —
     <label class="visually-hidden" for="event-end-time-${id}">To</label>
-    <input class="event__input  event__input--time" id="event-end-time-${id}" type="text" name="event-end-time" value="${formatToDateInput(dateTo)}">
+    <input class="event__input  event__input--time" id="event-end-time-${id}" type="text" name="event-end-time" value="${dateTo ? formatToDateInput(dateTo) : ''}">
   </div>
 `;
 

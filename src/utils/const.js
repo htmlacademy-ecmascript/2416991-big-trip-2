@@ -1,16 +1,14 @@
-import dayjs from 'dayjs';
-
 const DESTINATION_ID_START = 1001;
 
 const POINT_TYPES = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
 
-const DEFAULT_POINT_TYPE = POINT_TYPES[0];
+const DEFAULT_POINT_TYPE = POINT_TYPES[5];
 
 const DEFAULT_POINT = {
   'id': null,
-  'basePrice': 100,
-  'dateFrom': dayjs().toISOString(),
-  'dateTo': dayjs().add(1, 'day').toISOString(),
+  'basePrice': 0,
+  'dateFrom': '',
+  'dateTo': '',
   'destination': '',
   'isFavorite': false,
   'offers': [],
@@ -45,14 +43,6 @@ const SortItem = {
   }
 };
 
-const USER_DESTINATION = {
-  id: 'user-id',
-  name: 'user-destination',
-  description: '',
-  pictures: []
-
-};
-
 const UserAction = {
   UPDATE_POINT: 'UPDATE_POINT',
   ADD_POINT: 'ADD_POINT',
@@ -72,5 +62,5 @@ const FilterType = {
   PAST: 'past'
 };
 
-export { DEFAULT_POINT, DESTINATION_ID_START, FilterType, POINT_TYPES, SortItem, UpdateType, USER_DESTINATION, UserAction };
+export { DEFAULT_POINT, DESTINATION_ID_START, FilterType, POINT_TYPES, SortItem, UpdateType, UserAction };
 

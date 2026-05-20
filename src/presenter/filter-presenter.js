@@ -1,5 +1,4 @@
 import { remove, render, replace } from '../framework/render';
-import { UpdateType } from '../utils/const';
 import FilterView from '../view/filter-view';
 
 export default class FilterPresenter {
@@ -44,6 +43,6 @@ export default class FilterPresenter {
       return;
     }
 
-    this.#filterModel.setFilter(UpdateType.MAJOR, filterType);
+    this.#filterModel.filter(filterType);
   };
 }
