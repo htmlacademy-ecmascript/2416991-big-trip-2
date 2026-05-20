@@ -17,13 +17,6 @@ const DEFAULT_POINT = {
   'type': DEFAULT_POINT_TYPE
 };
 
-const NoPointsMessages = {
-  EVERYTHING: 'Click New Event to create your first point',
-  PAST: 'There are no past events now',
-  PRESENT: 'There are no present events now',
-  FUTURE: 'There are no future events now'
-};
-
 const SortItem = {
   DEFAULT: {
     name: 'day',
@@ -79,5 +72,5 @@ const FilterType = {
   PAST: 'past'
 };
 
-export { DEFAULT_POINT, DESTINATION_ID_START, FilterType, NoPointsMessages, POINT_TYPES, SortItem, UpdateType, USER_DESTINATION, UserAction };
+export { DEFAULT_POINT, DESTINATION_ID_START, FilterType, POINT_TYPES, SortItem, UpdateType, USER_DESTINATION, UserAction };
 
