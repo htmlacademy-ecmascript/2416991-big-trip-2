@@ -3,6 +3,7 @@ import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { POINT_TYPES } from '../utils/const.js';
 import { formatToDateInput } from '../utils/date.js';
 import { capitalize } from '../utils/text.js';
+import he from 'he';
 
 import 'flatpickr/dist/flatpickr.min.css';
 import { isPointDataValid } from '../utils/utils.js';
@@ -53,7 +54,7 @@ const createDestinationInputTemplate = ({
             id="event-destination-${id}"
             type="text"
             name="event-destination"
-            value="${currentDestination.name}"
+            value="${he.encode(currentDestination.name)}"
             list="destination-list-${id}"
           >
 
@@ -79,7 +80,7 @@ const createPriceTemplate = (basePrice, id) => `
       <span class="visually-hidden">Price</span>
       €
     </label>
-    <input class="event__input  event__input--price" id="event-price-${id}" type="text" name="event-price" value="${basePrice}">
+    <input class="event__input  event__input--price" id="event-price-${id}" type="text" name="event-price" value="${he.encode(String(basePrice))}">
   </div>
 `;
 
