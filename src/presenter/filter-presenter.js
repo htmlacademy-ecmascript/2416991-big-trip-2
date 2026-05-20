@@ -43,6 +43,6 @@ export default class FilterPresenter {
       return;
     }
 
-    this.#filterModel.filter(filterType);
+    this.#filterModel.filter = filterType;
   };
 }
