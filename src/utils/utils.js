@@ -13,4 +13,15 @@ const isPointsEqual = (pointA, pointB) => {
   return isBasePriceEqual && isDatesSame && isDestinationEqual && isFavoriteEqual && isOffersEqual && isTypeEqual;
 };
 
-export { isPointsEqual };
+const isNumber = (value) => !isNaN(value) && value !== '';
+
+const isPointDataValid = (point, destination, destinations) => {
+  const isBasePriceValid = isNumber(point.basePrice) && point.basePrice > 0;
+  const isDestinationValid =
+    destinations.some((destinationItem) => destinationItem.id === destination.id) &&
+    destinations.some((destinationItem) => destinationItem.id === point.destination);
+
+  return isBasePriceValid && isDestinationValid;
+};
+
+export { isPointsEqual, isPointDataValid };
