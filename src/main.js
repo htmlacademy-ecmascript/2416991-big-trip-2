@@ -31,10 +31,24 @@ const tripPresenter = new TripPresenter({
   destinationsModel,
   pointsModel,
   newPointModel,
-  filterModel
+  filterModel,
+  onNewEventDestroy: handleNewEventFormClose
 });
 
-render(new NewEventButtonView, mainContainer);
+const newEventButtonComponent = new NewEventButtonView({
+  onClick: handleNewEventButtonClick
+});
+
+function handleNewEventFormClose() {
+  newEventButtonComponent.element.disabled = false;
+}
+
+function handleNewEventButtonClick() {
+  tripPresenter.createEvent();
+  newEventButtonComponent.element.disabled = true;
+}
+
+render(newEventButtonComponent, mainContainer);
 
 filterPresenter.init();
 tripPresenter.init();

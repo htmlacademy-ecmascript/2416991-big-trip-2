@@ -172,7 +172,8 @@ const createPointFormTemplate = ({
   point,
   offers,
   currentDestination,
-  destinations
+  destinations,
+  isNewPoint
 }) => {
 
   const {
@@ -184,7 +185,6 @@ const createPointFormTemplate = ({
   } = point;
 
   const offersOfCurrentType = offers.find((offer) => offer.type === type).offers || [];
-  const isNewPoint = id === null;
 
   return `
     <li class="trip-events__item">
@@ -196,7 +196,7 @@ const createPointFormTemplate = ({
           ${createPriceTemplate(basePrice, id)}
           ${createButtonTemplate(false)}
           ${createButtonTemplate(true, isNewPoint)}
-          ${!isNewPoint && createRollupButtonTemplate()}
+          ${!isNewPoint ? createRollupButtonTemplate() : ''}
         </header>
         <section class="event__details">
           ${createOffersTemplate(offersOfCurrentType, point.offers)}
@@ -214,6 +214,7 @@ export default class PointFormView extends AbstractStatefulView {
   #handleFormReset = null;
   #handleRollupClick = null;
   #datepickers = [];
+  #isNewPoint = false;
 
   constructor({
     point,
@@ -221,7 +222,8 @@ export default class PointFormView extends AbstractStatefulView {
     destinations,
     onFormSubmit,
     onFormReset,
-    onRollupClick
+    onRollupClick,
+    isNewPoint = false
   }) {
     super();
     this._setState(point);
@@ -230,6 +232,7 @@ export default class PointFormView extends AbstractStatefulView {
     this.#handleFormSubmit = onFormSubmit;
     this.#handleFormReset = onFormReset;
     this.#handleRollupClick = onRollupClick;
+    this.#isNewPoint = isNewPoint;
 
     this._restoreHandlers();
   }
@@ -240,7 +243,8 @@ export default class PointFormView extends AbstractStatefulView {
       point: this._state,
       offers: this.#offers,
       currentDestination: this.#getCurrentDestination(),
-      destinations: this.#destinations
+      destinations: this.#destinations,
+      isNewPoint: this.#isNewPoint
     });
   }
 

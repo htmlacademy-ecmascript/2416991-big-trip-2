@@ -6,11 +6,12 @@ import { sortPoints } from '../utils/sort.js';
 import NoPointsView from '../view/no-points-view.js';
 import PointsListView from '../view/points-list-view.js';
 import SortView from '../view/sort-view.js';
+import NewEventPresenter from './new-event-presenter.js';
 import PointPresenter from './point-presenter.js';
 
 export default class TripPresenter {
   #tripContainer = null;
-  #pointsListComponent = new PointsListView();
+  #pointsListComponent = null;
   #offersModel = null;
   #destinationsModel = null;
   #pointsModel = null;
@@ -19,10 +20,12 @@ export default class TripPresenter {
   #sortComponent = null;
   #currentSortType = SortItem.DEFAULT.name;
   #noPointsComponent = null;
-  #pointPresenters = new Map();
   #currentFilter = FilterType.EVERYTHING;
+  #pointPresenters = new Map();
+  #newEventPresenter = null;
 
   #points = [];
+  #handleNewEventDestroy = null;
 
   constructor({
     tripContainer,
@@ -30,7 +33,8 @@ export default class TripPresenter {
     destinationsModel,
     pointsModel,
     newPointModel,
-    filterModel
+    filterModel,
+    onNewEventDestroy
   }) {
     this.#tripContainer = tripContainer;
     this.#offersModel = offersModel;
@@ -38,6 +42,14 @@ export default class TripPresenter {
     this.#pointsModel = pointsModel;
     this.#newPointModel = newPointModel;
     this.#filterModel = filterModel;
+    this.#handleNewEventDestroy = onNewEventDestroy;
+
+    this.#newEventPresenter = new NewEventPresenter({
+      offers: this.#offersModel.offers,
+      destinations: this.#destinationsModel.destinations,
+      onDataChange: this.#handleViewAction,
+      onDestroy: this.#newEventDestroyHandler
+    });
 
     this.#pointsModel.addObserver(this.#handleModelEvent);
     this.#filterModel.addObserver(this.#handleModelEvent);
@@ -53,6 +65,28 @@ export default class TripPresenter {
   init() {
     this.#renderBoard();
   }
+
+  createEvent() {
+    this.#currentSortType = SortItem.DEFAULT.name;
+    this.#filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
+
+    if (this.points.length === 0) {
+      if (this.#noPointsComponent) {
+        remove(this.#noPointsComponent);
+      }
+      this.#renderPointsList();
+    }
+
+    this.#newEventPresenter.init(this.#pointsListComponent.element);
+  }
+
+  #newEventDestroyHandler = () => {
+    this.#handleNewEventDestroy();
+
+    if (this.points.length === 0) {
+      this.#renderNoPoints();
+    }
+  };
 
   #handleViewAction = (actionType, updateType, update) => {
     switch (actionType) {
@@ -113,10 +147,18 @@ export default class TripPresenter {
   }
 
   #renderPointsList() {
+    const previousPointsListComponent = this.#pointsListComponent;
+    this.#pointsListComponent = new PointsListView();
+
+    if (previousPointsListComponent !== null) {
+      remove(previousPointsListComponent);
+    }
+
     render(this.#pointsListComponent, this.#tripContainer);
   }
 
   #handleModeChange = () => {
+    this.#newEventPresenter.destroy();
     this.#pointPresenters.forEach((presenter) => presenter.resetView());
   };
 
@@ -150,6 +192,7 @@ export default class TripPresenter {
   }
 
   #clearPoints() {
+    this.#newEventPresenter.destroy();
     this.#pointPresenters.forEach((presenter) => presenter.destroy());
     this.#pointPresenters.clear();
 
